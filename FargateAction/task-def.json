@@ -1,6 +1,7 @@
 {
     "family": "level-up-fargate", 
-    "networkMode": "awsvpc", 
+    "networkMode": "awsvpc",
+    "executionRoleArn": "arn:aws:iam::210874144112:role/ecsTaskExecutionRole",
     "containerDefinitions": [
         {
             "name": "ui-gaming-card-app", 
