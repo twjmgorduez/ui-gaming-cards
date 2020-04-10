@@ -17,7 +17,7 @@ jobs:
           node-version: 12.x
       - name: Build app
         run: npm ci
-      - name: Run tests o algo así
+      - name: Run tests
         run: npm run test
 
       - name: Configure AWS Credentials
@@ -32,6 +32,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
   
       - name: Build, tag, and push image to Amazon ECR
+        id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: level-up-ecr-repo
@@ -39,8 +40,24 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: FargateAction/task-def.json
+          container-name: ui-gaming-card-app
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: level-up-service
+          cluster: default
+          wait-for-service-stability: true
   
       - name: Logout of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
-
