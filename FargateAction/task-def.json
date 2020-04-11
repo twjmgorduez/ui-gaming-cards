@@ -5,7 +5,7 @@
     "containerDefinitions": [
         {
             "name": "ui-gaming-card-app", 
-            "image": "ui-gaming-card:0.0", 
+            "image": "ui-gaming-cards:1.0.0", 
             "portMappings": [
                 {
                     "containerPort": 3001, 
