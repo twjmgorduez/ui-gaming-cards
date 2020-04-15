@@ -33,4 +33,4 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      if: always() 
+      if: always()
