@@ -1,0 +1,36 @@
+
+name: Pull resquest checker
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  pull_request_checker:
+    name: Pull request checker
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Code checkout
+      uses: actions/checkout@v2
+
+    - name: NPM install -g yarn
+      run: npm install -g yarn  
+
+    - name: YARN install, build
+      run: |
+        yarn
+        yarn build
+
+    - name: Running unit tests  
+      run: |
+        yarn test
+        
+    - name: Slack Notification
+      uses: sonots/slack-notice-action@v3
+      with:
+        status: ${{ job.status }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      if: always() 
