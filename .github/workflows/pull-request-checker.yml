@@ -17,10 +17,9 @@ jobs:
     - name: NPM install -g yarn
       run: sudo npm install -g yarn  
 
-    - name: YARN install, build
+    - name: YARN install
       run: |
         yarn
-        yarn build
 
     - name: Running unit tests  
       run: |
