@@ -6,11 +6,14 @@ WORKDIR /app
 
 # Install app dependencies
 COPY package*.json ./
+COPY yarn.lock ./
 RUN yarn
 
 # Build app
-COPY src/main ./src/main
+COPY . ./
 RUN yarn build
+RUN rm -R src
+RUN yarn global add serve
 
 # Start app
-CMD ["yarn", "start"]
+CMD ["serve", "-s" ,"build"]
